@@ -19,11 +19,13 @@ def download(day: str, out_dir: str = "data/raw") -> Path:
     path = Path(out_dir) / f"{day}_istdaten.csv"
     if path.exists():
         print(f"Déjà présent : {path}"); return path
+    tmp = path.with_suffix(".part")          # fichier temporaire
     with requests.get(find_url(day), stream=True, timeout=120) as r:
         r.raise_for_status()
-        with open(path, "wb") as f:
+        with open(tmp, "wb") as f:
             for chunk in r.iter_content(chunk_size=1 << 20):
                 f.write(chunk)
+    tmp.rename(path)                         # renommé seulement s'il est complet
     print(f"Téléchargé : {path}"); return path
 
 if __name__ == "__main__":
