@@ -27,18 +27,26 @@ Orchestration : Airflow · Région : europe-west6 (Zurich)
 - [x] Exploration avec DuckDB : schéma, volumes, qualité des données
 - [x] Couches raw (texte brut) et staging (typage explicite, colonnes en anglais, tests de conversion)
 - [x] Stockage Parquet sur GCS et chargement BigQuery
+- [x] Pipeline d'un jour de bout en bout et rattrapage de l'historique disponible (50 jours)
 - [ ] Orchestration quotidienne avec Airflow
 - [ ] Modèles dbt et tests de qualité
 - [ ] Jointure avec les données MeteoSwiss
 - [ ] Dashboard
 
-## Chiffres clés (un dimanche)
+## Chiffres clés
 
-- 429 Mo de CSV, 1,7 million de lignes
+**Historique chargé** : 50 jours (20 août → 8 octobre 2026), 121,9 millions de lignes
+
+**Un jour type** : 2,6 millions de lignes en semaine, 1,7 million le dimanche
+
+**Stockage**
+- CSV → Parquet ZSTD : ×24 plus léger (≈ 660 Mo → 28 Mo par jour de semaine)
+- BigQuery : 35,4 Go logiques → 3,0 Go physiques (×12), facturation au stockage compressé
+
+**Qualité**
 - 88 % des heures d'arrivée réellement mesurées
 - 0 échec de conversion des dates après typage explicite
-- Parquet ZSTD : 429 Mo → 18 Mo (×24)
-- BigQuery : 490 Mo logiques → 46 Mo physiques ; facturation au stockage compressé (÷5 sur le coût)
+- Contrôle automatique : nombre de lignes BigQuery = nombre de lignes du fichier, pour chaque jour
 
 ## Décisions de conception
 
@@ -46,6 +54,18 @@ Voir [docs/decisions.md](docs/decisions.md).
 
 ## Lancer l'ingestion
 
+Prérequis : un projet GCP avec un bucket GCS et un dataset BigQuery en `europe-west6`,
+et `gcloud auth application-default login` effectué.
+
     python -m venv .venv && source .venv/bin/activate
     pip install -r requirements.txt
-    python ingestion/download_istdaten.py 2026-10-04
+
+    # Un jour de bout en bout : téléchargement → Parquet → GCS → BigQuery
+    python ingestion/pipeline.py 2026-10-08
+
+    # Tous les jours disponibles qui manquent (--dry-run pour voir le plan sans rien lancer)
+    python ingestion/backfill.py --dry-run
+    python ingestion/backfill.py
+
+Aide-mémoire complet des commandes : [docs/aide-memoire_commandes_bash.md](docs/aide-memoire_commandes_bash.md).
+

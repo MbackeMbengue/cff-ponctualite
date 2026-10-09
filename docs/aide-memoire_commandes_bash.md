@@ -83,6 +83,17 @@ print(len(urls), 'fichiers'); print(urls[:3]); print(urls[-5:])
 "
 ```
 
+Lancer le rattrapage en arrière-plan : il continue même si le terminal est fermé,
+et tous ses messages sont écrits dans un fichier journal.
+```bash
+nohup python3 -u ingestion/backfill.py > logs/backfill.log 2>&1 &
+```
+
+```bash
+tail -f logs/backfill.log   # suivre le journal en direct (Ctrl+C arrête l'affichage, pas le script)
+pgrep -af backfill          # vérifier que le script tourne encore
+kill <numéro>               # arrêter le script (numéro donné par pgrep)
+```
 ---
 
 ## 5. Explorer en local avec DuckDB
