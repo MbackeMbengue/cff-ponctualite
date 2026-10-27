@@ -28,14 +28,14 @@ Orchestration : Airflow · Région : europe-west6 (Zurich)
 - [x] Couches raw (texte brut) et staging (typage explicite, colonnes en anglais, tests de conversion)
 - [x] Stockage Parquet sur GCS et chargement BigQuery
 - [x] Pipeline d'un jour de bout en bout et rattrapage de l'historique disponible (50 jours)
-- [ ] Orchestration quotidienne avec Airflow
+- [x] Orchestration quotidienne avec Airflow
 - [ ] Modèles dbt et tests de qualité
 - [ ] Jointure avec les données MeteoSwiss
 - [ ] Dashboard
 
 ## Chiffres clés
 
-**Historique chargé** : 50 jours (20 août → 8 octobre 2026), 121,9 millions de lignes
+**Historique chargé** : 68 jours (20 août → 26 octobre 2026), +123 millions de lignes
 
 **Un jour type** : 2,6 millions de lignes en semaine, 1,7 million le dimanche
 

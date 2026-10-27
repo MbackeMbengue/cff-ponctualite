@@ -26,3 +26,8 @@
 
 13. **Facturation du stockage** : modèle physique (compressé) sur le dataset cff_raw ; compression mesurée de 10,7 (490 Mo logiques → 46 Mo physiques par jour). Time travel réduit à 48 h, la couche brute étant rechargeable depuis GCS.
 
+14. **Orchestration** : Airflow 3.3.2 en local avec Docker Compose, en LocalExecutor plutôt que CeleryExecutor (une seule machine, environ 1 Go de mémoire économisé). Cloud Composer écarté pour son coût.
+
+15. **DAG auto-réparateur** : la tâche quotidienne lance backfill.py, qui charge tous les jours manquants. Un lancement manqué (PC éteint) est rattrapé au suivant, sans logique de dates dans Airflow (catchup=False, max_active_runs=1).
+
+16. **Isolation** : projet Docker Compose nommé cff-airflow, pour ne pas entrer en collision avec un autre Airflow local.
