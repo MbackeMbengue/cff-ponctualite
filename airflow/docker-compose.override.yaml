@@ -1,0 +1,9 @@
+services:
+  airflow-scheduler:
+    volumes:
+      - ../ingestion:/opt/airflow/ingestion:ro
+      - ../data:/opt/airflow/data
+      - ${HOME}/.config/gcloud:/home/airflow/.config/gcloud:ro
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /home/airflow/.config/gcloud/application_default_credentials.json
+      GOOGLE_CLOUD_PROJECT: cff-ponctualite

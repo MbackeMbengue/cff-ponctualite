@@ -3,3 +3,6 @@ data/
 __pycache__/
 .Rhistory
 logs/
+airflow/logs/
+airflow/.env
+airflow/config/airflow.cfg
